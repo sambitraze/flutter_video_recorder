@@ -4,6 +4,8 @@ import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:video_player/video_player.dart';
+import 'package:video_resume/demo.dart';
+
 
 class CameraExampleHome extends StatefulWidget {
   @override
@@ -31,10 +33,7 @@ void logError(String code, String message) =>
 class _CameraExampleHomeState extends State<CameraExampleHome>
     with WidgetsBindingObserver {
   CameraController controller;
-  String imagePath;
   String videoPath;
-  VideoPlayerController videoController;
-  VoidCallback videoPlayerListener;
   ResolutionPreset resPreset = ResolutionPreset.low;
 
   @override
@@ -70,44 +69,48 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
   Widget build(BuildContext context) {
     return Scaffold(
       key: _scaffoldKey,
-      body: SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Expanded(
-              child: Container(
-                child: Padding(
-                  padding: const EdgeInsets.all(1.0),
-                  child: Center(
-                    child: _cameraPreviewWidget(),
+      body: Stack(
+        children:<Widget>[ SafeArea(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Expanded(
+                child: Container(
+                  child: Padding(
+                    padding: const EdgeInsets.all(1.0),
+                    child: Center(
+                      child: _cameraPreviewWidget(),
+                    ),
                   ),
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.black,
-                  border: Border.all(
-                    color:
-                        controller != null && controller.value.isRecordingVideo
-                            ? Colors.redAccent
-                            : Colors.grey,
-                    width: 3.0,
+                  decoration: BoxDecoration(
+                    color: Colors.black,
+                    border: Border.all(
+                      color:
+                          controller != null && controller.value.isRecordingVideo
+                              ? Colors.redAccent
+                              : Colors.grey,
+                      width: 3.0,
+                    ),
                   ),
                 ),
               ),
-            ),
-            _captureControlRowWidget(),
-            Container(
-              padding: EdgeInsets.all(10.0),
-              height: 90,
-              width: double.infinity,
-              child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    _selres(),
-                    _cameraTogglesRowWidget(),
-                  ]),
-            ),
-          ],
+              _captureControlRowWidget(),
+              Container(
+                padding: EdgeInsets.all(10.0),
+                height: 90,
+                width: double.infinity,
+                child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: <Widget>[
+                      _selres(),
+                      _cameraTogglesRowWidget(),
+                    ]),
+              ),
+            ],
+          ),
         ),
+        Drag(),
+        ]
       ),
     );
   }
@@ -130,9 +133,6 @@ class _CameraExampleHomeState extends State<CameraExampleHome>
       );
     }
   }
-
-  /// Display the thumbnail of the captured image or video.
-
   /// Display the control bar with buttons to take pictures and record videos.
   Widget _captureControlRowWidget() {
     return Row(
